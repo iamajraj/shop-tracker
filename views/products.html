@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Products</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        width: 100%;
+        font-family: "Poppins", sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(to left, #fdefa3, #a9d2ff);
+        padding: 4rem;
+      }
+
+      main .title {
+        border-bottom: 1px solid gray;
+        padding-bottom: 8px;
+      }
+
+      main {
+        width: 100%;
+        max-width: 1000px;
+        height: 700px;
+        border-radius: 16px;
+        border: 1px solid whitesmoke;
+        background-color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .form-control {
+        margin-top: 10px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .form-control .item {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .form-control .item label {
+        font-size: 15px;
+      }
+      .form-control .item input {
+        background-color: white;
+        border: 1px solid gainsboro;
+        padding: 12px 7px;
+        border-radius: 12px;
+        outline: none;
+        font-size: 15px;
+        font-weight: 300;
+      }
+      .form-control .item input:focus {
+        outline: none;
+      }
+      .form-control .item input::placeholder {
+        font-weight: 300;
+      }
+      .form-control .form-btns {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .form-control .submit-btn,
+      .form-control .cancel-update-btn {
+        width: 100%;
+        margin-top: 10px;
+        padding-block: 10px;
+        border-radius: 200px;
+        border: none;
+        cursor: pointer;
+        font-size: 17px;
+        background: linear-gradient(to left, #fdefa3, #a9d2ff);
+      }
+      .form-control .form-btns .cancel-update-btn {
+        display: none;
+        background: #ff7d2c;
+        color: white;
+      }
+      .products {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        width: 100%;
+        height: 100%;
+        overflow: scroll;
+      }
+      .products-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .products-info-controls {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .products-info-controls .selection-stock {
+        background-color: white;
+        border: 1px solid gainsboro;
+        padding: 4px 7px;
+        border-radius: 12px;
+        outline: none;
+        font-size: 15px;
+        font-weight: 300;
+      }
+      .products .products-info .search-input {
+        width: 100%;
+        max-width: 200px;
+        margin-left: auto;
+        padding: 8px 10px;
+        border: 1px solid gainsboro;
+        border-radius: 6px;
+      }
+      .table-control {
+        width: 100%;
+        overflow-y: scroll;
+        border-radius: 10px;
+        padding: 5px;
+        border: none;
+      }
+      .table-control thead tr td {
+        text-align: center;
+        border: 1px solid gainsboro;
+        font-size: 15px;
+      }
+      .table-control tbody tr td {
+        text-align: center;
+        font-size: 14px;
+      }
+      .table-control tbody tr td {
+        border: 1px solid gainsboro;
+      }
+      .edit-btn {
+        margin-block: 4px;
+        background: linear-gradient(to left, #fdefa3, #a9d2ff);
+        padding: 3px 6px;
+        border: none;
+        outline: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 class="title">Products</h1>
+
+      <form
+        class="form-control products-form"
+        action="/insert-product"
+        method="post"
+      >
+        <div class="item">
+          <label for="name">Product*</label>
+          <input type="text" name="name" placeholder="Enter Product Name" />
+        </div>
+        <div class="item">
+          <label for="stock">Stock*</label>
+          <input type="number" name="stock" placeholder="Enter Product Stock" />
+        </div>
+        <div class="item">
+          <label for="actualPrice">Actual Price (per piece)*</label>
+          <input
+            type="number"
+            name="actualPrice"
+            placeholder="Enter Product Actual Price"
+          />
+        </div>
+        <div class="item">
+          <label for="salePrice">Sale Price (per piece)*</label>
+          <input
+            type="number"
+            name="salePrice"
+            placeholder="Enter Product Sale Price"
+          />
+        </div>
+        <div class="form-btns">
+          <button type="submit" class="submit-btn">Insert</button>
+          <button type="button" class="cancel-update-btn">Cancel Update</button>
+        </div>
+      </form>
+
+      <div class="products">
+        <div class="products-info">
+          <h3>Products</h3>
+          <div class="products-info-controls">
+            <select name="selectStock" class="selection-stock">
+              <option value="">Select</option>
+              <option value="in_stock">In Stock</option>
+              <option value="out_of_stock">Out Of Stock</option>
+            </select>
+            <input type="text" placeholder="Search" class="search-input" />
+          </div>
+        </div>
+        <table class="table-control products-table">
+          <thead>
+            <tr>
+              <td>Id</td>
+              <td>Name</td>
+              <td>Stock</td>
+              <td>Sale Price</td>
+              <td>Actual Price</td>
+              <td>Date</td>
+              <td>Action</td>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </main>
+    <a
+      target="_blank"
+      href="https://github.com/iamajraj"
+      style="
+        display: block;
+        margin-top: 10px;
+        text-decoration: none;
+        color: black;
+        font-size: 14px;
+      "
+      >&copy; iamajraj | All Rights Reserved
+    </a>
+
+    <script>
+      const productsTableBody = document.querySelector(".products-table tbody");
+      const searchInput = document.querySelector(".search-input");
+      const selectionStock = document.querySelector(".selection-stock");
+
+      // form inputs
+      const form = document.querySelector(".products-form");
+      const nameInp = document.querySelector("input[name='name']");
+      const stockInp = document.querySelector("input[name='stock']");
+      const actualPriceInp = document.querySelector(
+        "input[name='actualPrice']"
+      );
+      const salePriceInp = document.querySelector("input[name='salePrice']");
+
+      const submitBtn = document.querySelector(".submit-btn");
+      const cancelUpdateBtn = document.querySelector(".cancel-update-btn");
+
+      fetchAndSetProducts();
+      let products = [];
+      let filteredProducts = [];
+
+      async function fetchAndSetProducts() {
+        const response = await fetch("/get-products");
+        const data = await response.json();
+
+        products = data.data;
+        filteredProducts = products;
+
+        loadProducts();
+      }
+
+      function loadProducts() {
+        productsTableBody.innerHTML = "";
+        filteredProducts.forEach((item) => {
+          const product = getTableProduct({ ...item });
+          productsTableBody.insertAdjacentHTML("beforeend", product);
+        });
+      }
+
+      function getTableProduct({
+        id,
+        name,
+        actualPrice,
+        salePrice,
+        stock,
+        createdAt,
+      }) {
+        return `<tr>
+              <td>${id}</td>
+              <td>${name}</td>
+              <td>${stock}</td>
+              <td>${salePrice} tk</td>
+              <td>${actualPrice} tk</td>
+              <td>${new Date(createdAt).toLocaleDateString()}</td>
+              <td>
+                <button data-product-id="${id}" class="edit-btn" onclick="editProduct.call(this)">Edit</button>
+              </td>
+            </tr>`;
+      }
+
+      searchInput.addEventListener("input", (ev) => {
+        let value = ev.target.value.trim();
+        if (value != "") {
+          filteredProducts = products.filter((product) => {
+            return (
+              product.name.toLowerCase().includes(value.toLowerCase()) ||
+              String(product.stock).includes(value) ||
+              String(product.actualPrice).includes(value) ||
+              String(product.salePrice).includes(value)
+            );
+          });
+        } else {
+          filteredProducts = products;
+        }
+        loadProducts();
+      });
+
+      selectionStock.addEventListener("change", (ev) => {
+        switch (ev.target.value) {
+          case "in_stock":
+            filteredProducts = products.filter((prod) => prod.stock > 0);
+            break;
+          case "out_of_stock":
+            filteredProducts = products.filter((prod) => prod.stock === 0);
+            break;
+          default:
+            filteredProducts = products;
+            break;
+        }
+        loadProducts();
+      });
+
+      let productIdInp = null;
+      function editProduct() {
+        let id = Number(this.getAttribute("data-product-id"));
+        const product = products.find((prod) => prod.id === id);
+
+        nameInp.value = product.name;
+        stockInp.value = product.stock;
+        actualPriceInp.value = product.actualPrice;
+        salePriceInp.value = product.salePrice;
+
+        productIdInp = document.createElement("input");
+        productIdInp.name = "productId";
+        productIdInp.value = id;
+        productIdInp.hidden = true;
+        form.appendChild(productIdInp);
+
+        submitBtn.textContent = "Update Product";
+        form.action = "/update-product";
+        form.method = "put";
+        cancelUpdateBtn.style.display = "block";
+      }
+
+      cancelUpdateBtn.addEventListener("click", () => {
+        nameInp.value = "";
+        stockInp.value = "";
+        actualPriceInp.value = "";
+        salePriceInp.value = "";
+
+        if (productIdInp) {
+          productIdInp.remove();
+        }
+        submitBtn.textContent = "Insert Product";
+        form.action = "/insert-product";
+        form.method = "post";
+        cancelUpdateBtn.style.display = "none";
+      });
+    </script>
+  </body>
+</html>

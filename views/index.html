@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sold Products</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        font-family: "Poppins", sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(to left, #fdefa3, #a9d2ff);
+        padding: 4rem 8rem;
+      }
+
+      main .title {
+        border-bottom: 1px solid gray;
+        padding-bottom: 8px;
+      }
+
+      main {
+        width: 100%;
+        max-width: 800px;
+        height: 700px;
+        border-radius: 16px;
+        border: 1px solid whitesmoke;
+        background-color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .form-control {
+        margin-top: 10px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .form-control .item {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .form-control .item label {
+        font-size: 15px;
+      }
+      .form-control .item input,
+      .form-control .item select {
+        background-color: white;
+        border: 1px solid gainsboro;
+        padding: 12px 7px;
+        border-radius: 12px;
+        outline: none;
+        font-size: 15px;
+        font-weight: 300;
+      }
+      .form-control .item input:focus {
+        outline: none;
+      }
+      .form-control .item input::placeholder,
+      .form-control .item select {
+        font-weight: 300;
+      }
+      .form-control .insert-btn {
+        width: 100%;
+        margin-top: 10px;
+        padding-block: 10px;
+        border-radius: 200px;
+        border: none;
+        cursor: pointer;
+        font-size: 17px;
+        background: linear-gradient(to left, #fdefa3, #a9d2ff);
+      }
+      .products {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        width: 100%;
+        height: 100%;
+        overflow: scroll;
+      }
+      .products-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .products .products-info .search-input {
+        width: 100%;
+        max-width: 40%;
+        margin-left: auto;
+        padding: 8px 10px;
+        border: 1px solid gainsboro;
+        border-radius: 6px;
+      }
+      .table-control {
+        width: 100%;
+        overflow-y: scroll;
+        border-radius: 10px;
+        padding: 5px;
+        border: none;
+      }
+      .table-control thead tr td {
+        text-align: center;
+        border: 1px solid gainsboro;
+        font-size: 15px;
+      }
+      .table-control tbody tr td {
+        text-align: center;
+        font-size: 14px;
+      }
+      .table-control tbody tr td {
+        border: 1px solid gainsboro;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 class="title">Sold Products</h1>
+
+      <form class="form-control" action="/insert-sale" method="post">
+        <div class="item">
+          <label for="productId">Product*</label>
+          <select name="productId" class="products-selection">
+            <option value="">Select Product</option>
+          </select>
+        </div>
+        <div class="item">
+          <label for="quantity">Quantity*</label>
+          <input
+            type="number"
+            name="quantity"
+            placeholder="Enter Product Quantity..."
+          />
+        </div>
+        <button type="submit" class="insert-btn">Insert</button>
+      </form>
+
+      <div class="products">
+        <div class="products-info">
+          <h3>Sold Products</h3>
+          <input type="text" placeholder="Search" class="search-input" />
+        </div>
+        <table class="table-control products-table">
+          <thead>
+            <tr>
+              <td>Id</td>
+              <td>Name</td>
+              <td>Quantity</td>
+              <td>Price (Per Piece)</td>
+              <td>Total</td>
+              <td>Profit</td>
+              <td>Date</td>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </main>
+    <a
+      target="_blank"
+      href="https://github.com/iamajraj"
+      style="
+        display: block;
+        margin-top: 10px;
+        text-decoration: none;
+        color: black;
+        font-size: 14px;
+      "
+      >&copy; iamajraj | All Rights Reserved
+    </a>
+
+    <script>
+      const productsTableBody = document.querySelector(".products-table tbody");
+      const selectionProducts = document.querySelector(".products-selection");
+      const searchInput = document.querySelector(".search-input");
+
+      // selection products
+      let products = [];
+
+      async function fetchAndSetProductsSelection() {
+        const response = await fetch("/get-products");
+        const data = await response.json();
+        products = data.data;
+
+        products.forEach((product) => {
+          let { id, name, stock, actualPrice, salePrice, createdAt } = product;
+          const option = document.createElement("option");
+          option.value = id;
+          option.textContent = name;
+          selectionProducts.appendChild(option);
+        });
+      }
+
+      fetchAndSetProductsSelection();
+
+      // sold products
+      let soldProducts = [];
+      let filteredSoldProducts = [];
+
+      async function fetchAndSetSoldProducts() {
+        const response = await fetch("/sold-products");
+        const data = await response.json();
+
+        soldProducts = data.data.sort((a, b) => b.id - a.id);
+        filteredSoldProducts = soldProducts;
+
+        loadSoldProducts();
+      }
+      fetchAndSetSoldProducts();
+
+      function loadSoldProducts() {
+        productsTableBody.innerHTML = "";
+        filteredSoldProducts.forEach((item) => {
+          const product = getTableProduct({ ...item });
+          productsTableBody.insertAdjacentHTML("beforeend", product);
+        });
+        productsTableBody.insertAdjacentHTML(
+          "beforeend",
+          getTotalSoldProductInfo()
+        );
+      }
+
+      function getTotalSoldProductInfo() {
+        let totalProfit = soldProducts.reduce((acc, curr) => {
+          let product = products.find((prod) => prod.id === curr.productId);
+          let actualPrice = Number(product.actualPrice) * curr.quantity;
+          let salePrice = Number(product.salePrice) * curr.quantity;
+          let profit = salePrice - actualPrice;
+          return acc + profit;
+        }, 0);
+
+        const totalSale = soldProducts.reduce((acc, curr) => {
+          return acc + Number(curr.price) * curr.quantity;
+        }, 0);
+
+        return `<tr>
+              <td>Total</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>${totalSale} tk</td>
+              <td>${totalProfit} tk</td>
+              <td></td>
+            </tr>`;
+      }
+
+      function getTableProduct({
+        productId,
+        id,
+        name,
+        quantity,
+        price,
+        createdAt,
+      }) {
+        const product = products.find((prod) => prod.id === productId);
+        const actualTotalPrice = product.actualPrice * quantity;
+        const saleTotalPrice = product.salePrice * quantity;
+        return `<tr>
+              <td>${id}</td>
+              <td>${name}</td>
+              <td>${quantity}</td>
+              <td>${price} tk</td>
+              <td>${quantity * price} tk</td>
+              <td>${saleTotalPrice - actualTotalPrice} tk</td>
+              <td>${new Date(createdAt).toLocaleDateString()}</td>
+            </tr>`;
+      }
+
+      searchInput.addEventListener("input", (ev) => {
+        let value = ev.target.value.trim();
+        if (value != "") {
+          filteredProducts = products.filter((product) => {
+            return (
+              product.name.toLowerCase().includes(value.toLowerCase()) ||
+              String(product.quantity).includes(value) ||
+              String(product.id).includes(value) ||
+              String(product.price).includes(value)
+            );
+          });
+        } else {
+          filteredProducts = products;
+        }
+        loadProducts();
+      });
+    </script>
+  </body>
+</html>
