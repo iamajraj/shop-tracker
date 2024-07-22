@@ -28,7 +28,7 @@ class Response {
   constructor(res, req) {
     this.#res = res;
     this.#req = req;
-    this.setHeader("Content-Type", "application/json");
+    this.#res.statusCode = this.statusCode;
   }
 
   setHeader(name, value) {
@@ -40,21 +40,38 @@ class Response {
     this.#res.statusCode = code;
   }
 
-  async sendFile(view, data = {}) {
-    this.#res.statusCode = this.statusCode;
-    const filePath = path.join(process.cwd(), "views", view);
-    const file = await fs.readFile(filePath);
-    this.sendHTML(file.toString("utf8"));
+  async #getFile(filepath) {
+    try {
+      const file = await fs.readFile(filepath);
+      return file;
+    } catch (err) {
+      return null;
+    }
   }
 
-  sendHTML(html) {
+  async sendView(view) {
     this.setHeader("Content-Type", "text/html");
-    this.#res.write(html);
+    const filePath = path.join(process.cwd(), "views", view);
+    const file = await this.#getFile(filePath);
+    this.#writeFileToRes(file);
+  }
+
+  async sendFile(filePath) {
+    const file = await this.#getFile(filePath);
+    this.#writeFileToRes(file);
+  }
+
+  async #writeFileToRes(file) {
+    if (file) {
+      this.#res.write(file);
+    } else {
+      this.setStatusCode(404);
+    }
     this.end();
   }
 
   sendJSON(message, data = {}) {
-    this.#res.statusCode = this.statusCode;
+    this.setHeader("Content-Type", "application/json");
     this.#res.write(
       JSON.stringify({
         status: this.statusCode,

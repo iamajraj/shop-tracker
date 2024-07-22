@@ -1,15 +1,24 @@
 const { soldProducts, products } = require("./connection");
 const Request = require("./request");
 const Response = require("./response");
+const path = require("path");
+
+async function handlePublicDir(req, res) {
+  const rs = new Response(res, req);
+  const rh = new Request(req);
+  const url = rh.getURL();
+  const filePath = path.join(process.cwd(), url);
+  await rs.sendFile(filePath);
+}
 
 async function indexPage(req, res) {
   const rs = new Response(res, req);
-  await rs.sendFile("index.html");
+  await rs.sendView("index.html");
 }
 
 async function productsPage(req, res) {
   const rs = new Response(res, req);
-  await rs.sendFile("products.html");
+  await rs.sendView("products.html");
 }
 
 async function getSoldProducts(req, res) {
@@ -60,7 +69,7 @@ async function updateProduct(req, res) {
   let data = await rh.json();
 
   let productId = data?.productId ? Number(data?.productId) : null;
-  let name = decodeURI(data?.name);
+  let name = data?.name;
   let actualPrice = data?.actualPrice;
   let salePrice = data?.salePrice;
   let stock = data?.stock;
@@ -72,6 +81,7 @@ async function updateProduct(req, res) {
     !isNaN(salePrice) &&
     !isNaN(stock)
   ) {
+    name = decodeURIComponent(name);
     actualPrice = Number(data?.actualPrice);
     salePrice = Number(data?.salePrice);
     stock = Number(data?.stock);
@@ -145,4 +155,5 @@ module.exports = {
   insertProduct,
   insertSale,
   updateProduct,
+  handlePublicDir,
 };

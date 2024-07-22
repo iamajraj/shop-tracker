@@ -5,6 +5,10 @@ class Request {
     this.#req = req;
   }
 
+  getURL() {
+    return this.#req.url;
+  }
+
   async readData() {
     return new Promise((resolve) => {
       let data = "";

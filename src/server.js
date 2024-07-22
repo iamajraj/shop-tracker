@@ -9,6 +9,7 @@ const {
   productsPage,
   statusPage,
   updateProduct,
+  handlePublicDir,
 } = require("./routes");
 
 const mapper = {
@@ -24,9 +25,14 @@ const mapper = {
 
 http
   .createServer(async (req, res) => {
-    let pageHandler = mapper[req.url];
-    if (!pageHandler) return pageNotFound(req, res);
-    await pageHandler(req, res);
+    // handle public dir
+    if (req.url.startsWith("/public")) {
+      await handlePublicDir(req, res);
+    } else {
+      let pageHandler = mapper[req.url];
+      if (!pageHandler) return pageNotFound(req, res);
+      await pageHandler(req, res);
+    }
   })
   .listen(8000, () => {
     console.log("Server started http://localhost:8000");

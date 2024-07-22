@@ -1,0 +1,10 @@
+.form-control .insert-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding-block: 10px;
+  border-radius: 200px;
+  border: none;
+  cursor: pointer;
+  font-size: 17px;
+  background: linear-gradient(to left, #fdefa3, #a9d2ff);
+}

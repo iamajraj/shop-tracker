@@ -1,0 +1,45 @@
+.form-control .form-btns {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.form-control .submit-btn,
+.form-control .cancel-update-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding-block: 10px;
+  border-radius: 200px;
+  border: none;
+  cursor: pointer;
+  font-size: 17px;
+  background: linear-gradient(to left, #fdefa3, #a9d2ff);
+}
+.form-control .form-btns .cancel-update-btn {
+  display: none;
+  background: #ff7d2c;
+  color: white;
+}
+.products-info-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.products-info-controls .selection-stock {
+  background-color: white;
+  border: 1px solid gainsboro;
+  padding: 4px 7px;
+  border-radius: 12px;
+  outline: none;
+  font-size: 15px;
+  font-weight: 300;
+}
+.edit-btn {
+  margin-block: 4px;
+  background: linear-gradient(to left, #fdefa3, #a9d2ff);
+  padding: 3px 6px;
+  border: none;
+  outline: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
