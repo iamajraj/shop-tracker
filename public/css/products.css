@@ -3,6 +3,9 @@
   align-items: center;
   gap: 5px;
 }
+.form-control .form-btns {
+  grid-column: span 2;
+}
 .form-control .submit-btn,
 .form-control .cancel-update-btn {
   width: 100%;
